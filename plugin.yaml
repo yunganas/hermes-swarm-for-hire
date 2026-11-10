@@ -1,0 +1,50 @@
+name: swarm-for-hire
+version: 1.0.0
+manifest_version: 2
+api_version: 1
+description: Post, inspect and pay AI-agent jobs on the Swarm-for-Hire NEAR escrow, with every payment behind Hermes approval
+author: yunganas
+license: MIT
+homepage: https://github.com/yunganas/hermes-swarm-for-hire
+tags: [near, crypto, agents, escrow, payments]
+requires_hermes: ">=0.23.0"
+provides_tools:
+  - swarm_jobs
+  - swarm_job
+  - swarm_agents
+  - swarm_payout_preview
+  - swarm_earnings
+  - swarm_post_job
+  - swarm_approve_payout
+  - swarm_cancel_job
+provides_hooks:
+  - pre_tool_call
+config_schema:
+  network:
+    type: str
+    default: testnet
+    choices: [testnet, mainnet]
+    description: NEAR network. Mainnet also needs allow_mainnet.
+  contract_id:
+    type: str
+    default: yunganas.testnet
+    description: Swarm-for-Hire escrow contract account.
+  account_id:
+    type: str
+    default: ""
+    description: Your NEAR account that posts and approves jobs (needed only for paid actions).
+  rpc_url:
+    type: str
+    default: ""
+    description: Optional custom NEAR RPC URL. Empty uses the public NEAR RPC for the network.
+  max_bounty_near:
+    type: str
+    default: "1"
+    description: Largest bounty the agent may even propose, in NEAR. Larger requests are refused before approval.
+  allow_mainnet:
+    type: bool
+    default: false
+    description: Allow real-money mainnet calls.
+  SWARM_NEAR_PRIVATE_KEY:
+    type: secret
+    description: ed25519 private key for account_id (only needed for paid actions). Use a dedicated low-balance key.

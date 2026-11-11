@@ -52,8 +52,23 @@ def _pre_tool_call(tool_name=None, args=None, task_id=None, **kwargs):
     return {"action": "approve", "message": msg}
 
 
+def _settings_reader(ctx):
+    """Read this plugin's settings. Hermes 0.23 takes one key per get_config call."""
+    def read():
+        out = {}
+        for key in tools.DEFAULTS:
+            try:
+                value = ctx.get_config(key)
+            except Exception:  # noqa: BLE001
+                value = None
+            if value not in (None, ""):
+                out[key] = value
+        return out
+    return read
+
+
 def register(ctx):
-    tools.configure(settings=lambda: ctx.get_config() or {}, secret=_get_secret)
+    tools.configure(settings=_settings_reader(ctx), secret=_get_secret)
     for schema in schemas.ALL:
         name = schema["name"]
         ctx.register_tool(
